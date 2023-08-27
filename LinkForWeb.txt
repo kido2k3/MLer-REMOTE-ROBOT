@@ -1,6 +1,7 @@
 Ban to chuc
 	Demo: http://agilertc.com/
 	Video & slide: https://drive.google.com/drive/folders/1-KD4S6XGd4Q2KAkfl8UF19s85tmAnEEH?usp=sharing
+	Git: https://github.com/TeamGRITDocs/colearn-sample/blob/main/pages/remote-control/video-keyboard-control/script.js
 HTML
 	https://www.youtube.com/watch?v=jSyH0HxKQPY&ab_channel=Ph%E1%BA%A1mHuyHo%C3%A0ng
 Sample project
