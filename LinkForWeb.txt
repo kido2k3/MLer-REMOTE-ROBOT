@@ -1,2 +1,5 @@
+Ban to chuc
+	Demo: http://agilertc.com/
+	Video & slide: https://drive.google.com/drive/folders/1-KD4S6XGd4Q2KAkfl8UF19s85tmAnEEH?usp=sharing
 Sample project (ESP)
 	https://www.instructables.com/WiFi-WebSocket-Remote-Robot/
