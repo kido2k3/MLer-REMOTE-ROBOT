@@ -8,4 +8,6 @@ Sample project
 	(Websocket) https://www.youtube.com/watch?v=Ab7sqFML-4E&ab_channel=Ph%E1%BA%A1mHuyHo%C3%A0ng
 	(ESP) https://www.instructables.com/WiFi-WebSocket-Remote-Robot/
 
-Hand gesture sample video: https://youtu.be/9MTiQMxTXPE?si=57Qu3W6uhuGX5zUQ
+Wifi C18.04 - 2.4 hz
+host agilertc.com
+>>>>>>> Stashed changes
