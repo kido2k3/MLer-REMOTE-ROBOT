@@ -57,11 +57,25 @@ function initializeVariables() {
   let websocket;
   let networkConfig = {};
   let controlCommandMap = {
-    KeyW: "N",
-    KeyA: "CCW",
-    KeyS: "S",
-    KeyD: "CW",
+    ArrowUp: "N",
+    ArrowLeft: "CCW",
+    ArrowDown: "S",
+    ArrowRight: "CW",
+    KeyA:"FCC",
+    KeyS:"FCW",
+    KeyD:"BCC",
+    KeyZ:"BCW",
+    KeyX:"FL",
+    KeyC:"FR",
+    KeyQ:"BL",
+    KeyW:"BR",
+    KeyE:"L",
+    KeyR:"R",
+    KeyF:"a01_on",
+    KeyG:"a01_off",
+
     KeyM: "STOP",
+    
   };
   let lastDirection;
 
