@@ -103,8 +103,16 @@ code {
 }
 
 div#container {
-  margin: 0 auto;
-  max-width: 60em;
+  width: 20em;
+  float:left;
+  padding: 1em 1.5em 1.3em 1.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+div#Video {
+  width: 66.5em;
+  float: right;
   padding: 1em 1.5em 1.3em 1.5em;
   border: 1px solid #ccc;
   border-radius: 4px;
