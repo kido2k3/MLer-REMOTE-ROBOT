@@ -61,21 +61,25 @@ function initializeVariables() {
     ArrowLeft: "CCW",
     ArrowDown: "S",
     ArrowRight: "CW",
-    KeyA:"FCC",
-    KeyS:"FCW",
-    KeyD:"BCC",
-    KeyZ:"BCW",
-    KeyX:"FL",
+    KeyL:"FCC",
+    KeyK:"FCW",
+    KeyJ:"BCC",
+    KeyM:"BCW",
+    KeyN:"FL",
     KeyC:"FR",
     KeyQ:"BL",
     KeyW:"BR",
-    KeyE:"L",
-    KeyR:"R",
-    KeyF:"a01_on",
-    KeyG:"a01_off",
-
-    KeyM: "STOP",
-    
+    KeyI:"L",
+    KeyU:"R",
+    Space: "STOP",
+    /*A-->L
+    S-->K
+    D-->J
+    Z-->M
+    X-->N
+    E-->I
+    R-->U
+    */
   };
   let lastDirection;
 
