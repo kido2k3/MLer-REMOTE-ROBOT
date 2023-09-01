@@ -32,8 +32,8 @@ let {
   networkConfig,
   controlCommandMap,
   lastDirection,
-  startTime,
-  frameQueue,
+  //startTime,
+  //frameQueue,
 } = initializeVariables();
 
 function initializeDOMElements() {
@@ -72,19 +72,12 @@ function initializeVariables() {
     KeyI:"L",
     KeyU:"R",
     Space: "STOP",
-    /*A-->L
-    S-->K
-    D-->J
-    Z-->M
-    X-->N
-    E-->I
-    R-->U
-    */
+    /*Replace keyboard with hand gesture*/
   };
   let lastDirection;
 
-  let startTime = 0;
-  let frameQueue = [];
+  //let startTime = 0;
+  //let frameQueue = [];
 
   return {
     device,
@@ -92,18 +85,13 @@ function initializeVariables() {
     networkConfig,
     controlCommandMap,
     lastDirection,
-    startTime,
-    frameQueue,
+    //startTime,
+    //frameQueue,
   };
 }
 
 async function bluetoothPairing() {
-  const ssidInput = document.getElementById("ssidInput");
-  const passwordInput = document.getElementById("passwordInput");
-  const hostInput = document.getElementById("hostInput");
-  const portInput = document.getElementById("portInput");
-  const channelInput = document.getElementById("channelInput");
-
+  
   const robotSelect = document.getElementById("robotSelect");
   const robotNameInput = document.getElementById("robotNameInput");
 
@@ -114,6 +102,11 @@ async function bluetoothPairing() {
 }
 
 function sendMediaServerInfo() {
+  const ssidInput = document.getElementById("ssidInput");
+  const passwordInput = document.getElementById("passwordInput");
+  const hostInput = document.getElementById("hostInput");
+  const portInput = document.getElementById("portInput");
+  const channelInput = document.getElementById("channelInput");
   const robotSelect = document.getElementById("robotSelect");
 
   networkConfig = {
@@ -156,7 +149,7 @@ function handleChunk(frame) {
 }
 
 async function openWebSocket() {
-
+  const videoElement = document.getElementById("videoElement");
   const path = `pang/ws/sub?channel=instant&name=${networkConfig.channel_name}&track=video&mode=bundle`;
   const serverURL = `${
     window.location.protocol.replace(/:$/, "") === "https" ? "wss" : "ws"
@@ -168,6 +161,7 @@ async function openWebSocket() {
     if (device) {
       document.addEventListener("keydown", handleKeyDown);
       document.addEventListener("keyup", handleKeyUp);
+      
     }
   };
   displayMessage("Open Video WebSocket");
@@ -211,7 +205,24 @@ function stop() {
   websocket.close();
   disconnectFromBluetoothDevice(device);
 }
-
+// added function
+async function getVideoStream({
+  deviceId,
+  idealWidth,
+  idealHeight,
+  idealFrameRate,
+}) {
+  return navigator.mediaDevices.getUserMedia({
+    video: deviceId
+      ? {
+          deviceId,
+          width: { min: 640, ideal: idealWidth },
+          height: { min: 400, ideal: idealHeight },
+          frameRate: { ideal: idealFrameRate, max: 120 },
+        }
+      : true,
+  });
+}
 async function connectToBluetoothDevice(deviceNamePrefix) {
   const options = {
     filters: [
