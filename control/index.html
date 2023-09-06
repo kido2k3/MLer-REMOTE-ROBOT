@@ -80,14 +80,24 @@
           <section>
             <button id="openWebSocketButton">Open</button>
             <button id="stopButton">Stop</button>
+           
             <div class="box">
               <canvas id="canvasElement"></canvas>
-              <video id="videoElement" autoplay muted></video>
-            </br>
               <textarea
                 disabled
                 name=""
                 id="messageView"
+                cols="20"
+                rows="20"
+              ></textarea>
+            </div>
+
+            <div class="box">
+              <video id = "videoElement" autoplay muted></video>
+              <textarea 
+                disabled
+                name=""
+                id="messageHand"
                 cols="20"
                 rows="20"
               ></textarea>
@@ -97,6 +107,6 @@
         </main>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
