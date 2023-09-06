@@ -1,21 +1,8 @@
 const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
-/**
- * ESP_CW_001
- * RPI_BW_001
- * RPI_CL_001
- * RPI_CL_002
- * RPI_CW_001
- * RPI_HA_001
- * RPI_HW_001
- * JTSN_HW_001
- */
 const deviceNamePrefixMap = {
   ESP_CW_001: "CoPlay",
   RPI_BW_001: "BBC",
 };
-/**
- * Bluetooth 서비스 및 특성 UUID
- */
 const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
@@ -32,8 +19,6 @@ let {
   networkConfig,
   controlCommandMap,
   lastDirection,
-  //startTime,
-  //frameQueue,
 } = initializeVariables();
 
 function initializeDOMElements() {
@@ -76,8 +61,6 @@ function initializeVariables() {
   };
   let lastDirection;
 
-  //let startTime = 0;
-  //let frameQueue = [];
 
   return {
     device,
@@ -85,8 +68,6 @@ function initializeVariables() {
     networkConfig,
     controlCommandMap,
     lastDirection,
-    //startTime,
-    //frameQueue,
   };
 }
 
