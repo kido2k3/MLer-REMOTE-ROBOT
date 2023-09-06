@@ -472,3 +472,4 @@ document.addEventListener("DOMContentLoaded", () => {
   openWebSocketButton.addEventListener("click", openWebSocket);
   stopButton.addEventListener("click", stop);
 });
+//add some comments
