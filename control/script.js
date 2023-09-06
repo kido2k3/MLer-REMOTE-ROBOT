@@ -1,8 +1,26 @@
+import {
+  FilesetResolver,
+  GestureRecognizer,
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2";
+
 const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
+/**
+ * ESP_CW_001
+ * RPI_BW_001
+ * RPI_CL_001
+ * RPI_CL_002
+ * RPI_CW_001
+ * RPI_HA_001
+ * RPI_HW_001
+ * JTSN_HW_001
+ */
 const deviceNamePrefixMap = {
   ESP_CW_001: "CoPlay",
   RPI_BW_001: "BBC",
 };
+/**
+ * Bluetooth 서비스 및 특성 UUID
+ */
 const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
@@ -18,7 +36,11 @@ let {
   websocket,
   networkConfig,
   controlCommandMap,
+  controlCommandMapHand,
   lastDirection,
+  lastDirectionHand,
+  startTime,
+  frameQueue,
 } = initializeVariables();
 
 function initializeDOMElements() {
@@ -42,37 +64,44 @@ function initializeVariables() {
   let websocket;
   let networkConfig = {};
   let controlCommandMap = {
-    ArrowUp: "N",
-    ArrowLeft: "CCW",
-    ArrowDown: "S",
-    ArrowRight: "CW",
-    KeyL:"FCC",
-    KeyK:"FCW",
-    KeyJ:"BCC",
-    KeyM:"BCW",
-    KeyN:"FL",
-    KeyC:"FR",
-    KeyQ:"BL",
-    KeyW:"BR",
-    KeyI:"L",
-    KeyU:"R",
-    Space: "STOP",
-    /*Replace keyboard with hand gesture*/
+    KeyW: "N",
+    KeyA: "CCW",
+    KeyS: "S",
+    KeyD: "CW",
+    KeyM: "STOP",
   };
+  let controlCommandMapHand = {
+    Closed_Fist: "N",
+    Open_Palm: "W",
+    Pointing_Up: "S",
+    Thumb_Up: "E",
+    Victory: "STOP",
+  }
   let lastDirection;
-
+  let lastDirectionHand;
+  let startTime = 0;
+  let frameQueue = [];
 
   return {
     device,
     websocket,
     networkConfig,
     controlCommandMap,
+    controlCommandMapHand,
     lastDirection,
+    lastDirectionHand,
+    startTime,
+    frameQueue,
   };
 }
 
 async function bluetoothPairing() {
-  
+  const ssidInput = document.getElementById("ssidInput");
+  const passwordInput = document.getElementById("passwordInput");
+  const hostInput = document.getElementById("hostInput");
+  const portInput = document.getElementById("portInput");
+  const channelInput = document.getElementById("channelInput");
+
   const robotSelect = document.getElementById("robotSelect");
   const robotNameInput = document.getElementById("robotNameInput");
 
@@ -83,11 +112,6 @@ async function bluetoothPairing() {
 }
 
 function sendMediaServerInfo() {
-  const ssidInput = document.getElementById("ssidInput");
-  const passwordInput = document.getElementById("passwordInput");
-  const hostInput = document.getElementById("hostInput");
-  const portInput = document.getElementById("portInput");
-  const channelInput = document.getElementById("channelInput");
   const robotSelect = document.getElementById("robotSelect");
 
   networkConfig = {
@@ -131,6 +155,7 @@ function handleChunk(frame) {
 
 async function openWebSocket() {
   const videoElement = document.getElementById("videoElement");
+
   const path = `pang/ws/sub?channel=instant&name=${networkConfig.channel_name}&track=video&mode=bundle`;
   const serverURL = `${
     window.location.protocol.replace(/:$/, "") === "https" ? "wss" : "ws"
@@ -138,13 +163,28 @@ async function openWebSocket() {
 
   websocket = new WebSocket(serverURL);
   websocket.binaryType = "arraybuffer";
-  websocket.onopen = () => {
+  // websocket.onopen = () => {
+  //   if (device) {
+  //     document.addEventListener("keydown", handleKeyDown);
+  //     document.addEventListener("keyup", handleKeyUp);
+  //   }
+  // };
+
+  websocket.onopen = async () => {
     if (device) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("keyup", handleKeyUp);
-      
+      await getVideoStream({
+        deviceId: device.id,
+      }).then(async (stream) => {
+        videoElement.srcObject = stream;
+
+        await createGestureRecognizer().then(() => {
+          detectHandGestureFromVideo(gestureRecognizer, stream);
+        });
+      });
     }
   };
+  
+  displayMessageHand("Open Video Hand WebSocket");
   displayMessage("Open Video WebSocket");
 
   const videoDecoder = new VideoDecoder({
@@ -186,24 +226,60 @@ function stop() {
   websocket.close();
   disconnectFromBluetoothDevice(device);
 }
-// added function
-async function getVideoStream({
-  deviceId,
-  idealWidth,
-  idealHeight,
-  idealFrameRate,
-}) {
-  return navigator.mediaDevices.getUserMedia({
-    video: deviceId
-      ? {
-          deviceId,
-          width: { min: 640, ideal: idealWidth },
-          height: { min: 400, ideal: idealHeight },
-          frameRate: { ideal: idealFrameRate, max: 120 },
-        }
-      : true,
+
+async function createGestureRecognizer() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm"
+  );
+  gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+      delegate: "GPU",
+    },
+    runningMode: runningMode,
   });
 }
+
+async function detectHandGestureFromVideo(gestureRecognizer, stream) {
+  if (!gestureRecognizer) return;
+
+  const videoTrack = stream.getVideoTracks()[0];
+  const capturedImage = new ImageCapture(videoTrack);
+  while (true) {
+    await capturedImage.grabFrame().then((imageBitmap) => {
+      const detectedGestures = gestureRecognizer.recognize(imageBitmap);
+
+      const {
+        landmarks,
+        worldLandmarks,
+        handednesses,
+        gestures,
+      } = detectedGestures;
+
+      if (gestures[0]) {
+        const gesture = gestures[0][0].categoryName;
+
+        if (Object.keys(controlCommandMapHand).includes(gesture)) {
+          const direction = controlCommandMapHand[gesture];
+          if (direction !== lastDirectionHand) {
+            lastDirectionHand = direction;
+
+            const controlCommand = {
+              type: "control",
+              direction,
+            };
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+              websocket.send(JSON.stringify(controlCommand));
+              displayMessage(`Send '${direction}' command`);
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
 async function connectToBluetoothDevice(deviceNamePrefix) {
   const options = {
     filters: [
@@ -315,6 +391,34 @@ async function handleKeyUp(e) {
     websocket.send(JSON.stringify(controlCommand));
     displayMessage(direction);
   }
+}
+
+async function getVideoStream({
+  deviceId,
+  idealWidth,
+  idealHeight,
+  idealFrameRate,
+}) {
+  return navigator.mediaDevices.getUserMedia({
+    video: deviceId
+      ? {
+          deviceId,
+          width: { min: 640, ideal: idealWidth },
+          height: { min: 400, ideal: idealHeight },
+          frameRate: { ideal: idealFrameRate, max: 120 },
+        }
+      : true,
+  });
+}
+
+function displayMessageHand(messageContentHand) {
+  const messageHand = document.getElementById("messageHand");
+
+  if (typeof messageContentHand == "object") {
+    messageContentHand = JSON.stringify(messageContentHand);
+  }
+  messageHand.innerHTML += `${messageContentHand}\n`;
+  messageHand.scrollTop = messageHand.scrollHeight;
 }
 
 function displayMessage(messageContent) {
