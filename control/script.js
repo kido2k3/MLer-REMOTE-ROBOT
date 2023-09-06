@@ -51,6 +51,7 @@ function initializeVariables() {
   let gestureRecognizer;
   let runningMode = "IMAGE";
   let controlCommandMap = {
+    /*
     ArrowUp: "N",
     ArrowLeft: "CCW",
     ArrowDown: "S",
@@ -66,7 +67,13 @@ function initializeVariables() {
     KeyI:"L",
     KeyU:"R",
     Space: "STOP",
+    */
     /*Replace keyboard with hand gesture*/
+    Closed_Fist: "N",
+    Open_Palm: "CCW",
+    Pointing_Up: "S",
+    Thumb_Up: "CW",
+    Victory: "STOP",
   };
   let lastDirection;
 
@@ -206,6 +213,57 @@ function stop() {
   disconnectFromBluetoothDevice(device);
 }
 // added function
+async function createGestureRecognizer() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm"
+  );
+  gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+      delegate: "GPU",
+    },
+    runningMode: runningMode,
+  });
+}
+async function detectHandGestureFromVideo(gestureRecognizer, stream) {
+  if (!gestureRecognizer) return;
+
+  const videoTrack = stream.getVideoTracks()[0];
+  const capturedImage = new ImageCapture(videoTrack);
+  while (true) {
+    await capturedImage.grabFrame().then((imageBitmap) => {
+      const detectedGestures = gestureRecognizer.recognize(imageBitmap);
+
+      const {
+        landmarks,
+        worldLandmarks,
+        handednesses,
+        gestures,
+      } = detectedGestures;
+
+      if (gestures[0]) {
+        const gesture = gestures[0][0].categoryName;
+
+        if (Object.keys(controlCommandMap).includes(gesture)) {
+          const direction = controlCommandMap[gesture];
+          if (direction !== lastDirection) {
+            lastDirection = direction;
+
+            const controlCommand = {
+              type: "control",
+              direction,
+            };
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+              websocket.send(JSON.stringify(controlCommand));
+              displayMessage(`Send '${direction}' command`);
+            }
+          }
+        }
+      }
+    });
+  }
+}
 async function getVideoStream({
   deviceId,
   idealWidth,
