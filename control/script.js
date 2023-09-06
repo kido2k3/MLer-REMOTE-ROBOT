@@ -362,38 +362,6 @@ function drawVideoFrameOnCanvas(canvas, frame) {
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 }
 
-async function handleKeyDown(e) {
-  const direction = controlCommandMap[e.code];
-  if (direction === lastDirection) return;
-  lastDirection = direction;
-
-  const controlCommand = {
-    type: "control",
-    direction,
-  };
-
-  if (websocket && websocket.readyState === WebSocket.OPEN) {
-    websocket.send(JSON.stringify(controlCommand));
-    displayMessage(direction);
-  }
-}
-
-async function handleKeyUp(e) {
-  const direction = "STOP";
-  if (direction === lastDirection) return;
-  lastDirection = direction;
-
-  const controlCommand = {
-    type: "control",
-    direction,
-  };
-
-  if (websocket && websocket.readyState === WebSocket.OPEN) {
-    websocket.send(JSON.stringify(controlCommand));
-    displayMessage(direction);
-  }
-}
-
 function displayMessage(messageContent) {
   const messageView = document.getElementById("messageView");
 
