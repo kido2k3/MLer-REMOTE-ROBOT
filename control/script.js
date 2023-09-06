@@ -169,10 +169,10 @@ async function openWebSocket() {
           detectHandGestureFromVideo(gestureRecognizer, stream);
         });
       });
+      displayMessage("Open Video WebSocket");
     }
   };
-  displayMessage("Open Video WebSocket");
-
+  
   const videoDecoder = new VideoDecoder({
     output: handleChunk,
     error: (error) => console.error(error),
