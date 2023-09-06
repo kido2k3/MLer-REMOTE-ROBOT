@@ -3,14 +3,14 @@ import {
   FilesetResolver,
   DrawingUtils,
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2";
-const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
+//const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
 const deviceNamePrefixMap = {
   ESP_CW_001: "CoPlay",
   RPI_BW_001: "BBC",
 };
 const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+//const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 
 const {
   pairButton,
