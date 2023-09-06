@@ -1,3 +1,8 @@
+import {
+  GestureRecognizer,
+  FilesetResolver,
+  DrawingUtils,
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2";
 const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
 const deviceNamePrefixMap = {
   ESP_CW_001: "CoPlay",
@@ -17,6 +22,8 @@ let {
   device,
   websocket,
   networkConfig,
+  gestureRecognizer,
+  runningMode,
   controlCommandMap,
   lastDirection,
 } = initializeVariables();
@@ -41,6 +48,8 @@ function initializeVariables() {
   let device;
   let websocket;
   let networkConfig = {};
+  let gestureRecognizer;
+  let runningMode = "IMAGE";
   let controlCommandMap = {
     ArrowUp: "N",
     ArrowLeft: "CCW",
@@ -66,6 +75,8 @@ function initializeVariables() {
     device,
     websocket,
     networkConfig,
+    gestureRecognizer,
+    runningMode,
     controlCommandMap,
     lastDirection,
   };
@@ -138,11 +149,19 @@ async function openWebSocket() {
 
   websocket = new WebSocket(serverURL);
   websocket.binaryType = "arraybuffer";
-  websocket.onopen = () => {
+  websocket.onopen = async() => {
     if (device) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("keyup", handleKeyUp);
-      
+      /*document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keyup", handleKeyUp);*/
+      await getVideoStream({
+        deviceId: device.id,
+      }).then(async (stream) => {
+        videoElement.srcObject = stream;
+
+        await createGestureRecognizer().then(() => {
+          detectHandGestureFromVideo(gestureRecognizer, stream);
+        });
+      });
     }
   };
   displayMessage("Open Video WebSocket");
