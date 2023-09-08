@@ -11,15 +11,17 @@
   <body>
     <header>
       <h1>
+        <h1>
         <div>MLER CONTROL CENTER</div>
         <a  style="color:rgb(255, 255, 255);" href ="https://github.com/kido2k3/MLer-REMOTE-ROBOT" title="Github link">Our information</a>
+        </h1>
       </h1>
     </header>
     <div class="container_swap">
       <div id="container" class="div_left">
         <header>
           <h1>
-            <div>Connecting</div>
+            <div>Connect Service</div>
           </h1>
         </header>
         <main>
@@ -30,7 +32,7 @@
               <option value="RPI_BW_001" selected>RPI_BW_001</option>
             </select>
             <button id="pairButton">Pairing</button>
-            <br />
+            <!-- <br /> -->
             <label for="">Connected Robot Name is </label>
             <input
               type="text"
@@ -45,7 +47,7 @@
             <h2>2. Send the media server information to robot.</h2>
             <label for="">SSID: </label>
             <input type="text" id="ssidInput" value="" placeholder="" />
-            <br/>
+            <!-- <br/> -->
             <label for="">Password: </label>
             <input type="password" id="passwordInput" value="" placeholder="" />
             <br/>
@@ -60,7 +62,7 @@
               <option value="8276" selected>8276</option>
               <option value="8277">8277</option>
             </select>
-            <br />
+            <!-- <br /> -->
   
             <label for="">Channel Name: </label>
             <input type="text" id="channelInput" value="" placeholder="" />
@@ -72,27 +74,29 @@
       <div id="Video" class="div_right">
         <header>
           <h1>
-            <div>Video</div>
+            <div>MLer's video</div>
           </h1>
         </header>
         <main>
           
           <section>
-            <button id="openWebSocketButton">Open</button>
-            <button id="stopButton">Stop</button>
+            <div class="box_button">
+            <open_button id="openWebSocketButton">OPEN</open_button>
+            <stop_button id="stopButton">STOP</stop_button>
+            </div>
             <div class="box">
               <canvas id="canvasElement"></canvas>
-              <video  id="videoElement" autoplay muted></video>
-            </br>
-              <textarea
-                disabled
-                name=""
-                id="messageView"
-                cols="20"
-                rows="20"
-              ></textarea>
-            </div>
-            
+              <div class="boxx">
+                <video  id="videoElement" autoplay muted></video>
+                <textarea
+                  disabled
+                  name=""
+                  id="messageView"
+                  cols="10"
+                  rows="10"
+                ></textarea>
+              </div>
+            </div>  
           </section>
         </main>
       </div>
