@@ -168,6 +168,8 @@ async function openWebSocket() {
         });
       });
       displayMessage("Open Video WebSocket");
+      displayInfo("Latency: ");
+      displayInfo("Accuracy: ");
     }
   };
 
@@ -354,6 +356,16 @@ function drawVideoFrameOnCanvas(canvas, frame) {
   if (!ctx) return;
 
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+}
+
+function displayInfo(info) {
+  const infoView = document.getElementById("infoView");
+
+  if (typeof info == "object") {
+    info = JSON.stringify(info);
+  }
+  infoView.innerHTML += `${info}\n`;
+  infoView.scrollTop = infoView.scrollHeight;
 }
 
 function displayMessage(messageContent) {
