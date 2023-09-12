@@ -77,7 +77,6 @@ function initializeVariables() {
   };
   let lastDirection;
 
-
   return {
     device,
     websocket,
@@ -90,7 +89,6 @@ function initializeVariables() {
 }
 
 async function bluetoothPairing() {
-  
   const robotSelect = document.getElementById("robotSelect");
   const robotNameInput = document.getElementById("robotNameInput");
 
@@ -156,7 +154,7 @@ async function openWebSocket() {
 
   websocket = new WebSocket(serverURL);
   websocket.binaryType = "arraybuffer";
-  websocket.onopen = async() => {
+  websocket.onopen = async () => {
     if (device) {
       /*document.addEventListener("keydown", handleKeyDown);
       document.addEventListener("keyup", handleKeyUp);*/
@@ -172,7 +170,7 @@ async function openWebSocket() {
       displayMessage("Open Video WebSocket");
     }
   };
-  
+
   const videoDecoder = new VideoDecoder({
     output: handleChunk,
     error: (error) => console.error(error),
@@ -235,12 +233,8 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
     await capturedImage.grabFrame().then((imageBitmap) => {
       const detectedGestures = gestureRecognizer.recognize(imageBitmap);
 
-      const {
-        landmarks,
-        worldLandmarks,
-        handednesses,
-        gestures,
-      } = detectedGestures;
+      const { landmarks, worldLandmarks, handednesses, gestures } =
+        detectedGestures;
 
       if (gestures[0]) {
         const gesture = gestures[0][0].categoryName;
@@ -355,7 +349,7 @@ async function sendMessageToDeviceOverBluetooth(message, device) {
 
 function drawVideoFrameOnCanvas(canvas, frame) {
   console.log("drawing video frame on canvas");
-  
+
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
