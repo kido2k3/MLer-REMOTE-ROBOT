@@ -216,6 +216,11 @@ async function openWebSocket() {
 
   keepWebSocketAlive(websocket);
 }
+const canvasElement = document.getElementById("canvasElement");
+const canvasCtx = canvasElement.getContext("2d");
+const videoHeight = "360px";
+const videoWidth = "480px";
+const gestureOutput = document.getElementById("gesture_output");
 
 function stop() {
   websocket.close();
@@ -256,7 +261,7 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
       if (gestures[0]) {
         const gesture = gestures[0][0].categoryName;
         ACCURACY = gestures[0][0].score * 100 ;
-        console.log(ACCURACY)
+        //console.log(ACCURACY)
         if (Object.keys(controlCommandMap).includes(gesture)) {
           const direction = controlCommandMap[gesture];
           if (direction !== lastDirection) {
@@ -275,8 +280,9 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
       }
       const end = performance.now();
       LATENCY = end - start; 
-      displayInfo(`Latency: ${LATENCY} ms`);
-      displayInfo(`Accuracy ${ACCURACY} %`);
+      gestureOutput.style.display = "block";
+      // gestureOutput.style.width = videoWidth;
+    gestureOutput.innerText = `Latency: ${LATENCY.toFixed(2)} ms \n Accuracy: ${ACCURACY.toFixed(2)} %`; 
     });
   }
 }
@@ -384,7 +390,9 @@ function displayInfo(info) {
   if (typeof info == "object") {
     info = JSON.stringify(info);
   }
-  infoView.innerHTML += `${info}\n`;
+  // infoView.innerHTML += `${info}\n`;
+  infoView.innerText += `${info}\n`;
+  infoView.style.display="none";
   infoView.scrollTop = infoView.scrollHeight;
 }
 
