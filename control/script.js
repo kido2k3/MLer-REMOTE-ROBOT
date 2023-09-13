@@ -28,6 +28,10 @@ let {
   lastDirection,
 } = initializeVariables();
 
+let LATENCY = 0;  
+let ACCURACY = 0;
+
+
 function initializeDOMElements() {
   const pairButton = document.getElementById("pairButton");
   const sendMediaServerInfoButton = document.getElementById(
@@ -69,11 +73,17 @@ function initializeVariables() {
     Space: "STOP",
     */
     /*Replace keyboard with hand gesture*/
-    Closed_Fist: "N",
-    Open_Palm: "CCW",
-    Pointing_Up: "S",
-    Thumb_Up: "CW",
-    Victory: "STOP",
+    FORWARD: "N", 
+    BACKWARD: "S", 
+    STOP: "STOP", 
+    TURNLEFT: "CCW", 
+    TURNRIGHT: "CW",
+    TB: "FCC", 
+    DB: "FCW", 
+    TN: "BCC", 
+    DN: "BCW", 
+    NT: "L", 
+    NP: "R",
   };
   let lastDirection;
 
@@ -168,8 +178,7 @@ async function openWebSocket() {
         });
       });
       displayMessage("Open Video WebSocket");
-      displayInfo("Latency: ");
-      displayInfo("Accuracy: ");
+     
     }
   };
 
@@ -218,9 +227,14 @@ async function createGestureRecognizer() {
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm"
   );
   gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+    // baseOptions: {
+    //   modelAssetPath:
+    //     "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+    //   delegate: "GPU",
+    // },
     baseOptions: {
       modelAssetPath:
-        "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+        "/trained_model/gesture_recognizer.task",
       delegate: "GPU",
     },
     runningMode: runningMode,
@@ -233,6 +247,7 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
   const capturedImage = new ImageCapture(videoTrack);
   while (true) {
     await capturedImage.grabFrame().then((imageBitmap) => {
+      const start = performance.now(); 
       const detectedGestures = gestureRecognizer.recognize(imageBitmap);
 
       const { landmarks, worldLandmarks, handednesses, gestures } =
@@ -240,7 +255,8 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
 
       if (gestures[0]) {
         const gesture = gestures[0][0].categoryName;
-
+        ACCURACY = gestures[0][0].score * 100 ;
+        console.log(ACCURACY)
         if (Object.keys(controlCommandMap).includes(gesture)) {
           const direction = controlCommandMap[gesture];
           if (direction !== lastDirection) {
@@ -257,6 +273,10 @@ async function detectHandGestureFromVideo(gestureRecognizer, stream) {
           }
         }
       }
+      const end = performance.now();
+      LATENCY = end - start; 
+      displayInfo(`Latency: ${LATENCY} ms`);
+      displayInfo(`Accuracy ${ACCURACY} %`);
     });
   }
 }
