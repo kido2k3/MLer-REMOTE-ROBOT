@@ -46,7 +46,6 @@ p {
   margin-block: 0.5em;
 }
 
-/* Components */
 .hidden {
   display: none;
 }
@@ -169,19 +168,10 @@ div.box2 {
  width: 100%;
 }
 
-/* div.boxx {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-gap: 1em;
- margin-bottom: 0.5em;
- width: 50%;
-} */
-
 div.box_button {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 8em;
-  /* margin-bottom: 1.0em; */
   width: auto;
 }
 
@@ -199,8 +189,6 @@ input[type="radio"] {
 textarea {
   resize: none;
   font-family: 'Times New Roman', Times, serif;
-  /* width: 220px;
-  height: 130px; */
   width: auto;
   height: auto;
   border: 1px solid #ccc;
@@ -211,8 +199,6 @@ textarea {
 gesture_output {
   resize: none;
   font-family: 'Times New Roman', Times, serif;
-  /* width: 220px;
-  height: 130px; */
   width: auto;
   height: auto;
   border: 1px solid #ccc;
@@ -229,7 +215,6 @@ video {
   margin: 0 0 0 0;
   width: 100%;
   height: 100%;
-  /* max-width: 20em; */
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transform: scaleX(-1);

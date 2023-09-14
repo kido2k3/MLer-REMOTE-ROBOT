@@ -3,14 +3,12 @@ import {
   FilesetResolver,
   DrawingUtils,
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2";
-//const DEFAULT_ROBOT_PROFILE = "RPI_BW_001";
 const deviceNamePrefixMap = {
   ESP_CW_001: "CoPlay",
   RPI_BW_001: "BBC",
 };
 const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-//const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 
 const {
   pairButton,
@@ -166,8 +164,6 @@ async function openWebSocket() {
   websocket.binaryType = "arraybuffer";
   websocket.onopen = async () => {
     if (device) {
-      /*document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("keyup", handleKeyUp);*/
       await getVideoStream({
         deviceId: device.id,
       }).then(async (stream) => {
@@ -232,11 +228,6 @@ async function createGestureRecognizer() {
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.2/wasm"
   );
   gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
-    // baseOptions: {
-    //   modelAssetPath:
-    //     "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
-    //   delegate: "GPU",
-    // },
     baseOptions: {
       modelAssetPath:
         "/trained_model/gesture_recognizer.task",
@@ -390,7 +381,6 @@ function displayInfo(info) {
   if (typeof info == "object") {
     info = JSON.stringify(info);
   }
-  // infoView.innerHTML += `${info}\n`;
   infoView.innerText += `${info}\n`;
   infoView.style.display="none";
   infoView.scrollTop = infoView.scrollHeight;
